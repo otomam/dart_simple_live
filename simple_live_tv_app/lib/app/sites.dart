@@ -3,33 +3,40 @@ import 'package:simple_live_tv_app/app/app_focus_node.dart';
 
 class Sites {
   static final Map<String, Site> allSites = {
+    "AcFun": Site(
+      id: "acfun",
+      logo: "assets/images/acfun.png",
+      name: "AcFun",
+      liveSite: AcFunSite(),
+      index: 0,
+    ),
     "bilibili": Site(
       id: "bilibili",
       logo: "assets/images/bilibili_2.png",
       name: "哔哩哔哩",
       liveSite: BiliBiliSite(),
-      index: 0,
+      index: 1,
     ),
     "douyu": Site(
       id: "douyu",
       logo: "assets/images/douyu.png",
       name: "斗鱼直播",
       liveSite: DouyuSite(),
-      index: 1,
+      index: 2,
     ),
     "huya": Site(
       id: "huya",
       logo: "assets/images/huya.png",
       name: "虎牙直播",
       liveSite: HuyaSite(),
-      index: 2,
+      index: 3,
     ),
     "douyin": Site(
       id: "douyin",
       logo: "assets/images/douyin.png",
       name: "抖音直播",
       liveSite: DouyinSite(),
-      index: 3,
+      index: 4,
     ),
   };
 

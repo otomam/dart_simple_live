@@ -98,6 +98,11 @@ Future printDanmaku(String url) async {
 }
 
 List parseUrl(String url) {
+  if (url.contains("acfun.cn")) {
+    var id =
+        RegExp(r"acfun\.cn/([\d|\w]+)").firstMatch(url)?.group(1) ?? "";
+    return [AcFunSite(), id];
+  }
   if (url.contains("bilibili.com")) {
     var id =
         RegExp(r"bilibili\.com/([\d|\w]+)").firstMatch(url)?.group(1) ?? "";
