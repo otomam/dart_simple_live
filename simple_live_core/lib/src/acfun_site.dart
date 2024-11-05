@@ -114,6 +114,7 @@ class AcFunSite implements LiveSite {
       var url = subItem['url'];
       if (url.isNotEmpty && subItem['name'] == quality.quality) {
         urls.add(url);
+      }
     }
     return urls;
   }
