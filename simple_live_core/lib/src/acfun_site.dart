@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:simple_live_core/src/common/http_client.dart';
-// import 'package:simple_live_core/src/danmaku/douyu_danmaku.dart';
+import 'package:simple_live_core/src/danmaku/acfun_danmaku.dart';
 import 'package:simple_live_core/src/interface/live_danmaku.dart';
 import 'package:simple_live_core/src/interface/live_site.dart';
 import 'package:simple_live_core/src/model/live_anchor_item.dart';
@@ -23,8 +23,8 @@ class AcFunSite implements LiveSite {
   @override
   String name = "AcFun";
 
-  // @override
-  // LiveDanmaku getDanmaku() => DouyuDanmaku();
+  @override
+  LiveDanmaku getDanmaku() => AcFunDanmaku();
 
   @override
   Future<List<LiveCategory>> getCategores() async {
@@ -34,10 +34,12 @@ class AcFunSite implements LiveSite {
     for (var item in result["channelFilters"]["liveChannelDisplayFilters"]["displayFilters"]) {
       var name = item["name"];
       var filterId = item["filterId"];
+      List<LiveSubCategory> subCategories = [];
       categories.add(
         LiveCategory(
           id: filterId.toString(),
           name: name.toString(),
+          children: subCategories,
         ),
       );
     }
@@ -81,7 +83,7 @@ class AcFunSite implements LiveSite {
     }
 
     var videoplayres = json.loads(data);
-    var liveadaptivemanifest, = videoplayres['liveAdaptiveManifest'];
+    var liveadaptivemanifest = videoplayres['liveAdaptiveManifest'];
     var adaptationset = liveadaptivemanifest['adaptationSet'];
     var representation = adaptationset['representation'];
 
@@ -107,7 +109,7 @@ class AcFunSite implements LiveSite {
     }
 
     var videoplayres = json.loads(data);
-    var liveadaptivemanifest, = videoplayres['liveAdaptiveManifest'];
+    var liveadaptivemanifest = videoplayres['liveAdaptiveManifest'];
     var adaptationset = liveadaptivemanifest['adaptationSet'];
     var representation = adaptationset['representation'];
     for (var subItem in representation) {
@@ -137,14 +139,14 @@ class AcFunSite implements LiveSite {
 
     var result2 = await HttpClient.instance.postJson(
       "https://api.kuaishouzt.com/rest/zt/live/web/startPlay",
-      data = 'authorId=$roomId&pullStreamType=FLV',
+      data: 'authorId=$roomId&pullStreamType=FLV',
       params: {
           'subBiz': 'mainApp',
           'kpn': 'ACFUN_APP',
           'kpf': 'PC_WEB',
-          'userId': $userid,
+          'userId': ${userid},
           'did': 'H5_',
-          'acfun.api.visitor_st': $visitor_st
+          'acfun.api.visitor_st': ${visitor_st}
       },
       header: {
         'content-type': 'application/x-www-form-urlencoded',
@@ -155,21 +157,21 @@ class AcFunSite implements LiveSite {
     );
 
     if (result2['result'] == 1) {
-      var data = res['data'];
+      var data = result2['data'];
       return jsonEncode(data['videoPlayRes']);;
     } else {
       return "";
     }
   }
 
-  // @override
-  // Future<LiveCategoryResult> getRecommendRooms({int page = 1}) async {
+  @override
+  Future<LiveCategoryResult> getRecommendRooms({int page = 1}) async {
   //   var result = await HttpClient.instance.getJson(
   //     "https://www.douyu.com/japi/weblist/apinc/allpage/6/$page",
   //     queryParameters: {},
   //   );
 
-  //   var items = <LiveRoomItem>[];
+    var items = <LiveRoomItem>[];
   //   for (var item in result['data']['rl']) {
   //     if (item["type"] != 1) {
   //       continue;
@@ -184,11 +186,11 @@ class AcFunSite implements LiveSite {
   //     items.add(roomItem);
   //   }
   //   var hasMore = page < result['data']['pgcnt'];
-  //   return LiveCategoryResult(hasMore: hasMore, items: items);
-  // }
+    return LiveCategoryResult(hasMore: false, items: items);
+  }
 
-  // @override
-  // Future<LiveRoomDetail> getRoomDetail({required String roomId}) async {
+  @override
+  Future<LiveRoomDetail> getRoomDetail({required String roomId}) async {
   //   Map roomInfo = await _getRoomInfo(roomId);
 
   //   var jsEncResult = await HttpClient.instance.getText(
@@ -201,6 +203,7 @@ class AcFunSite implements LiveSite {
   //       });
   //   var crptext = json.decode(jsEncResult)["data"]["room$roomId"].toString();
 
+    return LiveRoomDetail();
   //   return LiveRoomDetail(
   //     cover: roomInfo["room_pic"].toString(),
   //     online: int.tryParse(roomInfo["room_biz_all"]["hot"].toString()) ?? 0,
@@ -216,11 +219,11 @@ class AcFunSite implements LiveSite {
   //     url: "https://www.douyu.com/$roomId",
   //     isRecord: roomInfo["videoLoop"] == 1,
   //   );
-  // }
+  }
 
-  // @override
-  // Future<LiveSearchRoomResult> searchRooms(String keyword,
-  //     {int page = 1}) async {
+  @override
+  Future<LiveSearchRoomResult> searchRooms(String keyword,
+      {int page = 1}) async {
   //   var did = generateRandomString(32);
   //   var result = await HttpClient.instance.getJson(
   //     "https://www.douyu.com/japi/search/api/searchShow",
@@ -239,7 +242,7 @@ class AcFunSite implements LiveSite {
   //   if (result['error'] != 0) {
   //     throw Exception(result['msg']);
   //   }
-  //   var items = <LiveRoomItem>[];
+    var items = <LiveRoomItem>[];
   //   for (var item in result["data"]["relateShow"]) {
   //     var roomItem = LiveRoomItem(
   //       roomId: item["rid"].toString(),
@@ -252,7 +255,8 @@ class AcFunSite implements LiveSite {
   //   }
   //   var hasMore = result["data"]["relateShow"].isNotEmpty;
   //   return LiveSearchRoomResult(hasMore: hasMore, items: items);
-  // }
+    return LiveSearchRoomResult(hasMore: false, items: items);
+  }
 
   // Future<Map> _getRoomInfo(String roomId) async {
   //   var result = await HttpClient.instance.getJson(
@@ -283,9 +287,9 @@ class AcFunSite implements LiveSite {
   //   return stringBuffer.toString();
   // }
 
-  // @override
-  // Future<LiveSearchAnchorResult> searchAnchors(String keyword,
-  //     {int page = 1}) async {
+  @override
+  Future<LiveSearchAnchorResult> searchAnchors(String keyword,
+      {int page = 1}) async {
   //   var did = generateRandomString(32);
   //   var result = await HttpClient.instance.getJson(
   //     "https://www.douyu.com/japi/search/api/searchUser",
@@ -303,7 +307,7 @@ class AcFunSite implements LiveSite {
   //     },
   //   );
 
-  //   var items = <LiveAnchorItem>[];
+    var items = <LiveAnchorItem>[];
   //   for (var item in result["data"]["relateUser"]) {
   //     var liveStatus =
   //         (int.tryParse(item["anchorInfo"]["isLive"].toString()) ?? 0) == 1;
@@ -319,7 +323,8 @@ class AcFunSite implements LiveSite {
   //   }
   //   var hasMore = result["data"]["relateUser"].isNotEmpty;
   //   return LiveSearchAnchorResult(hasMore: hasMore, items: items);
-  // }
+    return LiveSearchAnchorResult(hasMore: false, items: items);
+  }
 
   @override
   Future<bool> getLiveStatus({required String roomId}) async {

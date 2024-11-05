@@ -9,6 +9,7 @@ export 'src/acfun_site.dart';
 export 'src/douyin_site.dart';
 export 'src/common/core_log.dart';
 export 'src/model/live_message.dart';
+export 'src/danmaku/acfun_danmaku.dart';
 export 'src/danmaku/bilibili_danmaku.dart';
 export 'src/danmaku/douyu_danmaku.dart';
 export 'src/danmaku/huya_danmaku.dart';
